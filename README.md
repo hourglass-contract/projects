@@ -1,6 +1,8 @@
 # Hourglass Token
 
-Earn dividends from every Buy and Sell from a 10% flat transaction fee distributed between all currently held tokens
+Earn dividends from every Buy and Sell 
+
+10% transaction fee equally distributed to all token holders
 
 ![Map to Ancient Gains](./images/map-to-ancient-gains.jpg "Map to Ancient Gains")
 
