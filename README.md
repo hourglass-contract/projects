@@ -9,6 +9,9 @@ Earn dividends from every Buy and Sell
 * Laugh at all the idiots putting ETH into this madness
 * Stop laughing because that's a lot of ETH
 
+# Contract Development
+[Let's build a contract](./contract)
+
 # Relevant Links
 Hourglass Contract: [https://etherscan.io/address/0xb3775fb83f7d12a36e0475abdd1fca35c091efbe](https://etherscan.io/address/0xb3775fb83f7d12a36e0475abdd1fca35c091efbe)
 
