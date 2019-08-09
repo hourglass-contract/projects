@@ -4,7 +4,7 @@ Earn dividends from every Buy and Sell
 
 10% transaction fee equally distributed to all token holders
 
-![Map to Ancient Gains](./images/map-to-ancient-gains.jpg "Map to Ancient Gains")
+![Map to Ancient Gains](./map-to-ancient-gains.jpg "Map to Ancient Gains")
 
 * Laugh at all the idiots putting ETH into this madness
 * Stop laughing because that's a lot of ETH
