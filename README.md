@@ -20,3 +20,6 @@ Hourglass Contract: [https://etherscan.io/address/0xb3775fb83f7d12a36e0475abdd1f
 [P3D Charts](https://p3dcharts.com)
 
 [P3D Exchange](https://powh.io/?masternode=0xf189bda172ddc4b6250b8c2cfbc174af18d3ad29)
+
+# Join the Community
+[Discord](https://discord.gg/DbapvnH)
