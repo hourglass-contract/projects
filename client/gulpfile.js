@@ -42,7 +42,7 @@ async function javascript() {
 function copyImages() {
   const files = [];
   files.push(
-    gulp.src(path.resolve(client + '/src/images/*'))
+    gulp.src(path.resolve(client + '/src/images/**/*'))
       .pipe(gulp.dest(path.resolve(client + '/dist/images')))
   );
 

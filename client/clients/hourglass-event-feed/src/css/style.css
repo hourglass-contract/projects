@@ -1,0 +1,30 @@
+body {
+  background-color: #555;
+  font-family: 'Poppins', 'sans-serif';
+}
+
+a {
+  color: #0096cf;
+}
+
+h1 {
+  color: #fff;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 1px #000;
+}
+
+h2 {
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+}
+
+span {
+  color: #ccc;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none;
+}
