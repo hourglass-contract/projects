@@ -1,5 +1,6 @@
 import getEventLogs from './getEventLogs';
 import getEventMarkup from './getEventMarkup';
+import queryStringToJSON from './queryStringToJSON';
 
 const loadMore = document.getElementById('load-more-transactions');
 
@@ -9,5 +10,9 @@ export default async function getEventsAndDisplayMarkup() {
   const markup = getEventMarkup(events) + '<div class="load-more-spacer"></div>';
 
   document.getElementById('event-feed').insertAdjacentHTML('beforeend', markup);
-  loadMore.classList.remove('hidden');
+  
+  const { address } = queryStringToJSON();
+  if (!address) {
+    loadMore.classList.remove('hidden');
+  }
 }
