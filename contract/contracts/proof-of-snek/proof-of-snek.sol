@@ -2,14 +2,16 @@ pragma solidity 0.5.11;
 
 /*
 *
-* This game is played with Ether and a touch of Fomo
+* Proof of Snek is a game of luck played with ETH and a touch of FOMO
 *
-* [x] Provably Fair
-* [x] Open Source
+* Draw one of four cards at random
+* Each card multiplies the amount of ETH sent by the card type
+* Drawing a Snek card activates the Jackpot Countdown
+* Be the last player to draw a Snek card when the Countdown reaches zero to win the Jackpot
 *
 */
 
-contract Slot3D {
+contract ProofOfSnek {
     // Emit event for each spin
     event OnSpin(
         address indexed _player,
@@ -27,7 +29,7 @@ contract Slot3D {
     );
 
     // Minimum amount needed to activate the Jackpot
-    uint256 public activationAmount;
+    uint256 public activationAmount = 2 ether;
 
     // Cost to become an affiliate
     uint256 public affiliateCost;
@@ -38,8 +40,8 @@ contract Slot3D {
     // Jackpot Clock
     uint256 public jackpotClock;
 
-    // Player to last play the game
-    address payable public lastUsedWallet;
+    // Wallet staking the Jackpot
+    address payable public jackpotWallet;
 
     // Contract Owner
     address payable public owner;
@@ -138,7 +140,11 @@ contract Slot3D {
         require(msg.sender == tx.origin, "Sender not authorized");
         require(msg.value >= costToPlay, "Amount sent too low");
 
-        uint256 random = Helpers.getRandom(4);
+        if (jackpotClock > 0 && jackpotClock < now) {
+            jackpotWinner();
+        }
+
+        uint256 random = getRandom(4);
 
         if (random == 1) {
             // win 175%
@@ -153,49 +159,42 @@ contract Slot3D {
             msg.sender.transfer(((costToPlay * 50) / 100) + 1 wei);
         }
         if (random == 4) {
-            // better luck next spin
-            if (address(this).balance > activationAmount) {
-                jackpotActivationAmount = now + 24 hours;
-
-                emit OnCountdownActivated(now);
-            }
-        }
-
-        if (jackpotClock > 0) {
-            checkForJackpotWinner();
-        }
-
-        emit OnSpin(msg.sender, random);
-    }
-
-    function checkForJackpotWinner()
-        private
-    {
-        if (jackpotClock < now) {
-            if (address(this).balance() > 1 ether) {
-                // Jackpot Winner
-                address payable jackpotWinner = jackpotWallet;
-                uint256 amountWon = (address(this).balance() - 1 ether) / 2;
-
-                emit OnJackpot(msg.sender, amountWon);
-
-                delete jackpotClock;
-                delete jackpotWallet;
-
-                jackpotWinner.transfer(amountWon);
-            } else {
-                delete jackpotClock;
-                delete jackpotWallet;
-            }
-        } else {
-            if (jackpotClock < now + 24 hours) {
+            // goodluck winning the jackpot
+            if (jackpotClock > 0 && jackpotClock < now + 24 hours) {
                 jackpotClock = now + 1 hours;
 
                 if (jackpotClock > now + 24 hours) {
                     jackpotClock = now + 24 hours;
                 }
+
+                jackpotWallet = msg.sender;
+            }
+            if (jackpotClock == 0 && address(this).balance > activationAmount) {
+                jackpotClock = now + 24 hours;
+
+                jackpotWallet = msg.sender;
+
+                emit OnCountdownActivated(now);
             }
         }
+
+        emit OnSpin(msg.sender, random);
+    }
+
+    function jackpotWinner()
+        private
+    {
+        // Jackpot
+        address payable _jackpotWallet = jackpotWallet;
+        uint256 amountWon = (address(this).balance) / 2;
+
+        delete jackpotClock;
+        delete jackpotWallet;
+
+        _jackpotWallet.transfer(amountWon);
+        owner.transfer(amountWon / 10);
+
+        emit OnJackpot(msg.sender, amountWon);
     }
 
     function getRandom(uint256 max)

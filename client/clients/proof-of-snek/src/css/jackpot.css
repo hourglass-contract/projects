@@ -1,0 +1,11 @@
+.jackpot {
+  color: #ccc;
+  font-size: 60px;
+  text-align: center;
+}
+
+.jackpot svg {
+  height: 60px;
+  margin-left: 10px;
+  vertical-align: -10px;
+}

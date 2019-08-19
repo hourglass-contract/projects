@@ -1,0 +1,10 @@
+.rules h2 {
+  color: #fff;
+  font-size: 21px;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.rules .box>div {
+  margin-bottom: 20px;
+}
