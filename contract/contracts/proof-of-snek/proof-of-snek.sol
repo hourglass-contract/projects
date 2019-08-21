@@ -2,40 +2,44 @@ pragma solidity 0.5.11;
 
 /*
 *
-* Proof of Snek is a game of luck played with ETH and a touch of FOMO
+* Proof of Snek
+* Game played with a bit of luck and a dose of FOMO
 *
 * Draw one of four cards at random
 * Each card multiplies the amount of ETH sent by the card type
-* Drawing a Snek card activates the Jackpot Countdown
+* Draw a Snek Card to activate the Jackpot Countdown (minimum activation amount required)
 * Be the last player to draw a Snek card when the Countdown reaches zero to win the Jackpot
 *
 */
 
 contract ProofOfSnek {
-    // Emit event for each spin
-    event OnSpin(
+    // Emit event for each card drawn
+    event OnDraw(
         address indexed _player,
         uint256 indexed _result
+        uint256 _timestamp
+    );
+
+    // Emit event when the Jackpot Countdown is activated
+    event OnCountdownActivated(
+        uint256 _timestamp
     );
 
     // Emit event for each Jackpot
     event OnJackpot(
         address indexed _player,
         uint256 _amount
-    );
-
-    event OnCountdownActivated(
         uint256 _timestamp
     );
-
-    // Minimum amount needed to activate the Jackpot
-    uint256 public activationAmount = 2 ether;
 
     // Cost to become an affiliate
     uint256 public affiliateCost;
 
     // Cost to play
-    uint256 public costToPlay;
+    uint256 public minBet;
+
+    // Minimum amount needed to activate the Jackpot
+    uint256 public jackpotActivationAmount;
 
     // Jackpot Clock
     uint256 public jackpotClock;
@@ -58,22 +62,63 @@ contract ProofOfSnek {
         payable
     {}
 
-    constructor(uint256 _costToPlay, uint256 _affiliateCost, uint256 _ownershipCost)
+    constructor(uint256 _jackpotActivationAmount, uint256 _affiliateCost, uint256 _minBet, uint256 _ownershipCost)
         public
     {
         owner = msg.sender;
-        costToPlay = _costToPlay;
         affiliateCost = _affiliateCost;
+        minBet = _minBet;
+        jackpotActivationAmount = _jackpotActivationAmount;
         ownershipCost = _ownershipCost;
+    }
+
+    modifier onlyEOA() {
+        require(msg.sender == tx.origin, "only Externally Owned Accounts");
+        _;
+    }
+
+    function getState() 
+        public
+        view
+        returns(
+            uint256 _affiliateCost,
+            uint256 _balance,
+            uint256 _jackpotActivationAmount,
+            uint256 _jackpotClock,
+            uint256 _jackpotWallet,
+            uint256 _maxBet,
+            uint256 _minBet,
+        )
+    {
+        return (
+            affiliateCost,
+            address(this).balance,
+            jackpotActivationAmount,
+            jackpotClock,
+            jackpotWallet,
+            getMaxBet(),
+            minBet
+        )
+    }
+
+    function getMaxBet() 
+        public
+        view
+        returns(uint256)
+    {
+        return address(this).balance / 100;
     }
 
     function createAffiliate()
         public
         payable
+        onlyEOA()
     {
-        // Attempt to prevent contracts from becoming affiliates
-        require(msg.sender == tx.origin, "Sender not authorized");
         require(msg.value >= affiliateCost);
+
+        // TODO
+        // 1/2 to the owner
+        // 1/2 to buy sell p3d
 
         affiliates[msg.sender] = true;
     }
@@ -81,17 +126,19 @@ contract ProofOfSnek {
     function spin(address payable affiliateAddress)
         public
         payable
+        onlyEOA()
     {
         _spin();
 
         if (affiliates[affiliateAddress]) {
-            affiliateAddress.transfer(costToPlay / 10);
+            affiliateAddress.transfer(msg.value / 10);
         }
     }
 
     function spin()
         public
         payable
+        onlyEOA()
     {
         _spin();
     }
@@ -100,28 +147,13 @@ contract ProofOfSnek {
     function takeOwnership()
         public
         payable
+        onlyEOA()
     {
-        require(msg.value >= ownershipCost, "Amount sent too low");
+        require(msg.value >= ownershipCost, "Send more ETH");
 
         owner.transfer(ownershipCost);
 
         owner = msg.sender;
-    }
-
-    function transferOwnership(address payable newOwner)
-        public
-    {
-        if (msg.sender == owner) {
-            owner = newOwner;
-        }
-    }
-
-    function setCostToPlay(uint256 newCostToPlay)
-        public
-    {
-        if (msg.sender == owner) {
-            costToPlay = newCostToPlay;
-        }
     }
 
     function setAffiliateCost(uint256 newAffiliateCost)
@@ -132,15 +164,32 @@ contract ProofOfSnek {
         }
     }
 
+    // function setMinBet(uint256 newMinBet)
+    //     public
+    // {
+    //     require(jackpotClock == 0, "No changing cost during Jackpot Countdown");
+    //     if (msg.sender == owner) {
+    //         minBet = newMinBet;
+    //     }
+    // }
+
+    function setJackpotActivationAmount(uint256 newActivationAmount)
+        public
+    {
+        if (msg.sender == owner) {
+            jackpotActivationAmount = newActivationAmount;
+        }
+    }
+
     /* ==== PRIVATE ==== */
 
     function _spin()
         private
     {
-        require(msg.sender == tx.origin, "Sender not authorized");
-        require(msg.value >= costToPlay, "Amount sent too low");
+        require(msg.value >= minBet, "Amount sent too low");
+        require(msg.value <= (address(this).balance / 50), "Amount sent too high");
 
-        if (jackpotClock > 0 && jackpotClock < now) {
+        if (jackpotClock > 0 && jackpotClock < block.timestamp) {
             jackpotWinner();
         }
 
@@ -148,37 +197,37 @@ contract ProofOfSnek {
 
         if (random == 1) {
             // win 175%
-            msg.sender.transfer(((costToPlay * 175) / 100) + 1 wei);
+            msg.sender.transfer(((minBet * 175) / 100) + 1 wei);
         }
         if (random == 2) {
             // win 125%
-            msg.sender.transfer(((costToPlay * 125) / 100) + 1 wei);
+            msg.sender.transfer(((minBet * 125) / 100) + 1 wei);
         }
         if (random == 3) {
             // win 50%
-            msg.sender.transfer(((costToPlay * 50) / 100) + 1 wei);
+            msg.sender.transfer(((minBet * 50) / 100) + 1 wei);
         }
         if (random == 4) {
             // goodluck winning the jackpot
-            if (jackpotClock > 0 && jackpotClock < now + 24 hours) {
-                jackpotClock = now + 1 hours;
+            if (jackpotClock > 0 && jackpotClock < block.timestamp + 24 hours) {
+                jackpotClock = block.timestamp + 1 hours;
 
-                if (jackpotClock > now + 24 hours) {
-                    jackpotClock = now + 24 hours;
+                if (jackpotClock > block.timestamp + 24 hours) {
+                    jackpotClock = block.timestamp + 24 hours;
                 }
 
                 jackpotWallet = msg.sender;
             }
-            if (jackpotClock == 0 && address(this).balance > activationAmount) {
-                jackpotClock = now + 24 hours;
+            if (jackpotClock == 0 && address(this).balance > jackpotActivationAmount) {
+                jackpotClock = block.timestamp + 24 hours;
 
                 jackpotWallet = msg.sender;
 
-                emit OnCountdownActivated(now);
+                emit OnCountdownActivated(block.timestamp);
             }
         }
 
-        emit OnSpin(msg.sender, random);
+        emit OnDraw(msg.sender, random, block.timestamp);
     }
 
     function jackpotWinner()
@@ -194,7 +243,7 @@ contract ProofOfSnek {
         _jackpotWallet.transfer(amountWon);
         owner.transfer(amountWon / 10);
 
-        emit OnJackpot(msg.sender, amountWon);
+        emit OnJackpot(msg.sender, amountWon, block.timestamp);
     }
 
     function getRandom(uint256 max)
@@ -206,7 +255,7 @@ contract ProofOfSnek {
         uint256 balance = address(this).balance;
 
         uint256 random = uint256(keccak256(abi.encodePacked(
-            now,
+            block.timestamp,
             block.coinbase,
             block.difficulty,
             blockhash_,
