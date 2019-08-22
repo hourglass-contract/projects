@@ -62,13 +62,13 @@ contract ProofOfSnek {
         payable
     {}
 
-    constructor(uint256 _jackpotActivationAmount, uint256 _affiliateCost, uint256 _minBet, uint256 _ownershipCost)
+    constructor(uint256 _affiliateCost, uint256 _jackpotActivationAmount, uint256 _minBet, uint256 _ownershipCost)
         public
     {
-        owner = msg.sender;
         affiliateCost = _affiliateCost;
-        minBet = _minBet;
         jackpotActivationAmount = _jackpotActivationAmount;
+        minBet = _minBet;
+        owner = msg.sender;
         ownershipCost = _ownershipCost;
     }
 
@@ -86,8 +86,7 @@ contract ProofOfSnek {
             uint256 _jackpotActivationAmount,
             uint256 _jackpotClock,
             uint256 _jackpotWallet,
-            uint256 _maxBet,
-            uint256 _minBet,
+            uint256 _maxBet
         )
     {
         return (
@@ -116,11 +115,11 @@ contract ProofOfSnek {
     {
         require(msg.value >= affiliateCost);
 
-        // TODO
-        // 1/2 to the owner
-        // 1/2 to buy sell p3d
+        // buy and sell p3d here
 
         affiliates[msg.sender] = true;
+
+        owner.transfer(msg.value / 2);
     }
 
     function spin(address payable affiliateAddress)
@@ -132,6 +131,8 @@ contract ProofOfSnek {
 
         if (affiliates[affiliateAddress]) {
             affiliateAddress.transfer(msg.value / 10);
+        } else {
+            owner.transfer(msg.value / 10);
         }
     }
 
@@ -141,6 +142,8 @@ contract ProofOfSnek {
         onlyEOA()
     {
         _spin();
+
+        owner.transfer(msg.value / 10);
     }
 
     // ==== CONTRACT OWNERSHIP ==== //
@@ -156,28 +159,29 @@ contract ProofOfSnek {
         owner = msg.sender;
     }
 
-    function setAffiliateCost(uint256 newAffiliateCost)
+    function setAffiliateCost(uint256 _affiliateCost)
         public
     {
         if (msg.sender == owner) {
-            affiliateCost = newAffiliateCost;
+            affiliateCost = _affiliateCost;
         }
     }
 
-    // function setMinBet(uint256 newMinBet)
-    //     public
-    // {
-    //     require(jackpotClock == 0, "No changing cost during Jackpot Countdown");
-    //     if (msg.sender == owner) {
-    //         minBet = newMinBet;
-    //     }
-    // }
+    function setMinBet(uint256 _minBet)
+        public
+    {
+        require(jackpotClock == 0, "Not during Jackpot Countdown");
 
-    function setJackpotActivationAmount(uint256 newActivationAmount)
+        if (msg.sender == owner) {
+            minBet = _minBet;
+        }
+    }
+
+    function setJackpotActivationAmount(uint256 _jackpotActivationAmount)
         public
     {
         if (msg.sender == owner) {
-            jackpotActivationAmount = newActivationAmount;
+            jackpotActivationAmount = _jackpotActivationAmount;
         }
     }
 
@@ -187,7 +191,7 @@ contract ProofOfSnek {
         private
     {
         require(msg.value >= minBet, "Amount sent too low");
-        require(msg.value <= (address(this).balance / 50), "Amount sent too high");
+        require(msg.value <= getMaxBet(), "Amount sent too high");
 
         if (jackpotClock > 0 && jackpotClock < block.timestamp) {
             jackpotWinner();
@@ -197,22 +201,22 @@ contract ProofOfSnek {
 
         if (random == 1) {
             // win 175%
-            msg.sender.transfer(((minBet * 175) / 100) + 1 wei);
+            msg.sender.transfer(((msg.value * 175) / 100) + 1 wei);
         }
         if (random == 2) {
             // win 125%
-            msg.sender.transfer(((minBet * 125) / 100) + 1 wei);
+            msg.sender.transfer(((msg.value * 125) / 100) + 1 wei);
         }
         if (random == 3) {
             // win 50%
-            msg.sender.transfer(((minBet * 50) / 100) + 1 wei);
+            msg.sender.transfer(((msg.value * 50) / 100) + 1 wei);
         }
         if (random == 4) {
-            // goodluck winning the jackpot
-            if (jackpotClock > 0 && jackpotClock < block.timestamp + 24 hours) {
-                jackpotClock = block.timestamp + 1 hours;
-
-                if (jackpotClock > block.timestamp + 24 hours) {
+            // Goodluck winning the Jackpot
+            if (jackpotClock > 0) {
+                if (jackpotClock < block.timestamp + 23 hours) {
+                    jackpotClock = block.timestamp + 1 hours;
+                } else {
                     jackpotClock = block.timestamp + 24 hours;
                 }
 
@@ -240,8 +244,8 @@ contract ProofOfSnek {
         delete jackpotClock;
         delete jackpotWallet;
 
+        // buy and sell p3d here
         _jackpotWallet.transfer(amountWon);
-        owner.transfer(amountWon / 10);
 
         emit OnJackpot(msg.sender, amountWon, block.timestamp);
     }
