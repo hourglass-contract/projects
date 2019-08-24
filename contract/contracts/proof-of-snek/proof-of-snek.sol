@@ -3,39 +3,53 @@ pragma solidity 0.5.11;
 /*
 *
 * Proof of Snek
-* Game played with a bit of luck and a dose of FOMO
+* Card game played with a bit of luck and a dose of FOMO
 *
 * Draw one of four cards at random
-* Each card multiplies the amount of ETH sent by the card type
+* Each card multiplies amount sent by the card type
 * Draw a Snek Card to activate the Jackpot Countdown (minimum activation amount required)
 * Be the last player to draw a Snek card when the Countdown reaches zero to win the Jackpot
 *
 */
 
 contract ProofOfSnek {
+
+    /* ==== EVENTS ==== */
+
     // Emit event for each card drawn
     event OnDraw(
         address indexed _player,
-        uint256 indexed _result
+        uint256 indexed _result,
+        bytes32 _playerName,
         uint256 _timestamp
     );
 
-    // Emit event when the Jackpot Countdown is activated
+    // Emit event when Jackpot Countdown activates
     event OnCountdownActivated(
         uint256 _timestamp
     );
 
-    // Emit event for each Jackpot
+    // Emit event when a player hits the Jackpot
     event OnJackpot(
         address indexed _player,
-        uint256 _amount
+        bytes32 _playerName,
+        uint256 _amount,
         uint256 _timestamp
     );
 
-    // Cost to become an affiliate
-    uint256 public affiliateCost;
+    // Emit event when a new player name is created
+    event OnPlayerName(
+        address indexed _playerAddress,
+        bytes32 _playerName,
+        uint256 _timestamp
+    );
 
-    // Cost to play
+    /* ==== GLOBALS ==== */
+
+    // Cost to set a vanity name
+    uint256 public costToSetPlayerName;
+
+    // Minimum bet
     uint256 public minBet;
 
     // Minimum amount needed to activate the Jackpot
@@ -53,8 +67,34 @@ contract ProofOfSnek {
     // Cost to take ownership
     uint256 public ownershipCost;
 
+    /* ==== MAPPINGS ==== */
+
     // Affiliates
     mapping (address => bool) affiliates;
+
+    // Playerbook
+    mapping (address => bytes32) playerBook;
+
+    /* ==== CONSTRUCTOR ==== */
+
+    constructor(uint256 _costToSetPlayerName, uint256 _jackpotActivationAmount, uint256 _minBet, uint256 _ownershipCost)
+        public
+    {
+        costToSetPlayerName = _costToSetPlayerName;
+        jackpotActivationAmount = _jackpotActivationAmount;
+        minBet = _minBet;
+        owner = msg.sender;
+        ownershipCost = _ownershipCost;
+    }
+
+    /* ==== MODIFIERS ==== */
+
+    modifier onlyEOA() {
+        require(msg.sender == tx.origin, "only Externally Owned Accounts");
+        _;
+    }
+
+    /* ==== FALLBACK ==== */
 
     // ETH sent directly to the contract
     function ()
@@ -62,78 +102,115 @@ contract ProofOfSnek {
         payable
     {}
 
-    constructor(uint256 _affiliateCost, uint256 _jackpotActivationAmount, uint256 _minBet, uint256 _ownershipCost)
-        public
-    {
-        affiliateCost = _affiliateCost;
-        jackpotActivationAmount = _jackpotActivationAmount;
-        minBet = _minBet;
-        owner = msg.sender;
-        ownershipCost = _ownershipCost;
-    }
-
-    modifier onlyEOA() {
-        require(msg.sender == tx.origin, "only Externally Owned Accounts");
-        _;
-    }
+    /* ==== PUBLIC VIEW ==== */
 
     function getState() 
         public
         view
         returns(
-            uint256 _affiliateCost,
             uint256 _balance,
+            uint256 _costToSetPlayerName,
             uint256 _jackpotActivationAmount,
             uint256 _jackpotClock,
-            uint256 _jackpotWallet,
-            uint256 _maxBet
+            address _jackpotWallet,
+            uint256 _maxBet,
+            uint256 _minBet
         )
     {
         return (
-            affiliateCost,
             address(this).balance,
+            costToSetPlayerName,
             jackpotActivationAmount,
             jackpotClock,
             jackpotWallet,
             getMaxBet(),
             minBet
-        )
+        );
     }
 
-    function getMaxBet() 
+    function getMaxBet()
         public
         view
-        returns(uint256)
+        returns(uint256 _maxBet)
     {
         return address(this).balance / 100;
     }
 
-    function createAffiliate()
+    function getPlayerName(address playerAddress)
         public
-        payable
-        onlyEOA()
+        view
+        returns(bytes32 playerName)
     {
-        require(msg.value >= affiliateCost);
-
-        // buy and sell p3d here
-
-        affiliates[msg.sender] = true;
-
-        owner.transfer(msg.value / 2);
+        return playerBook[playerAddress];
     }
 
-    function spin(address payable affiliateAddress)
+    function isValidVanityName(string memory vanityString)
         public
-        payable
+        pure
+        returns (bool)
+    {
+        bytes memory vanityBytes = bytes(vanityString);
+        uint256 stringLength = vanityBytes.length;
+
+        // Name must be between 1 and 32 characters
+        if (stringLength < 1 || stringLength > 32) {
+            return false;
+        }
+
+        // Can not begin or end with a space
+        if (vanityBytes[0] == 0x20 || vanityBytes[stringLength - 1] == 0x20) {
+            return false;
+        }
+
+        // Can not begin with the number 0
+        if (vanityBytes[0] == 0x30) {
+            return false;
+        }
+
+        // Validate each character in the name
+        for (uint i; i < vanityBytes.length; i++) {
+            byte char = vanityBytes[i];
+
+            if (
+                !(char >= 0x30 && char <= 0x39) && //0-9
+                !(char >= 0x61 && char <= 0x7A) && //a-z
+                !(char >= 0x41 && char <= 0x5A) && //A-Z
+                !(char == 0x20) && //space
+                !(char == 0x5F) && //_
+                !(char == 0x2E) //.
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /* ==== PUBLIC WRITE ==== */
+
+    function createAffiliate()
+        public
         onlyEOA()
     {
-        _spin();
+        affiliates[msg.sender] = true;
+    }
 
-        if (affiliates[affiliateAddress]) {
-            affiliateAddress.transfer(msg.value / 10);
-        } else {
-            owner.transfer(msg.value / 10);
-        }
+    function setPlayerName(string memory playerName)
+        public
+        payable
+    {
+        _setPlayerName(playerName);
+
+        payoutOwner();
+    }
+
+    function setPlayerName(string memory playerName, address payable affiliateAddress)
+        public
+        payable
+    {
+        _setPlayerName(playerName);
+
+        payoutAffiliate(affiliateAddress);
     }
 
     function spin()
@@ -141,12 +218,26 @@ contract ProofOfSnek {
         payable
         onlyEOA()
     {
-        _spin();
+        uint256 random = _spin();
 
-        owner.transfer(msg.value / 10);
+        if (random != 4) {
+            payoutOwner();
+        }
     }
 
-    // ==== CONTRACT OWNERSHIP ==== //
+    function spin(address payable affiliateAddress)
+        public
+        payable
+        onlyEOA()
+    {
+        uint256 random = _spin();
+
+        if (random != 4) {
+            payoutAffiliate(affiliateAddress);
+        }
+    }
+
+    /* ==== OWNER ==== */
     function takeOwnership()
         public
         payable
@@ -154,17 +245,9 @@ contract ProofOfSnek {
     {
         require(msg.value >= ownershipCost, "Send more ETH");
 
-        owner.transfer(ownershipCost);
+        owner.transfer(msg.value);
 
         owner = msg.sender;
-    }
-
-    function setAffiliateCost(uint256 _affiliateCost)
-        public
-    {
-        if (msg.sender == owner) {
-            affiliateCost = _affiliateCost;
-        }
     }
 
     function setMinBet(uint256 _minBet)
@@ -187,8 +270,79 @@ contract ProofOfSnek {
 
     /* ==== PRIVATE ==== */
 
+    function getRandom(uint256 max)
+        private
+        view
+        returns(uint256)
+    {
+        uint256 blockhash_ = uint256(blockhash(block.number-1));
+        uint256 balance = address(this).balance;
+
+        uint256 random = uint256(keccak256(abi.encodePacked(
+            block.timestamp,
+            block.coinbase,
+            block.difficulty,
+            blockhash_,
+            balance
+        ))) % max;
+
+        return random + 1;
+    }
+
+    function jackpotWinner()
+        private
+    {
+        // Jackpot
+        address payable _jackpotWallet = jackpotWallet;
+
+        delete jackpotClock;
+        delete jackpotWallet;
+
+        // Buy and Sell full contract balance to P3D
+
+        uint256 amountWon = (address(this).balance) / 2;
+        _jackpotWallet.transfer(amountWon);
+
+        emit OnJackpot(msg.sender, getPlayerName(msg.sender), amountWon, block.timestamp);
+    }
+
+    function payoutAffiliate(address payable affiliateAddress)
+        private
+    {
+        if (affiliates[affiliateAddress] && affiliateAddress != msg.sender) {
+            affiliateAddress.transfer(msg.value / 10);
+        } else {
+            payoutOwner();
+        }
+    }
+
+    function payoutOwner()
+        private
+    {
+        owner.transfer(msg.value / 10);
+    }
+
+    function _setPlayerName(string memory playerName)
+        private
+    {
+        require(msg.value >= costToSetPlayerName, "Amount sent too low");
+
+        require(isValidVanityName(playerName), "Invalid player name");
+
+        // Convert to bytes32 for smaller storage
+        bytes32 vanity32;
+        assembly {
+            vanity32 := mload(add(playerName, 32))
+        }
+
+        playerBook[msg.sender] = vanity32;
+
+        emit OnPlayerName(msg.sender, vanity32, block.timestamp);
+    }
+
     function _spin()
         private
+        returns (uint256)
     {
         require(msg.value >= minBet, "Amount sent too low");
         require(msg.value <= getMaxBet(), "Amount sent too high");
@@ -231,41 +385,8 @@ contract ProofOfSnek {
             }
         }
 
-        emit OnDraw(msg.sender, random, block.timestamp);
-    }
-
-    function jackpotWinner()
-        private
-    {
-        // Jackpot
-        address payable _jackpotWallet = jackpotWallet;
-        uint256 amountWon = (address(this).balance) / 2;
-
-        delete jackpotClock;
-        delete jackpotWallet;
-
-        // buy and sell p3d here
-        _jackpotWallet.transfer(amountWon);
-
-        emit OnJackpot(msg.sender, amountWon, block.timestamp);
-    }
-
-    function getRandom(uint256 max)
-        private
-        view
-        returns(uint256)
-    {
-        uint256 blockhash_ = uint256(blockhash(block.number-1));
-        uint256 balance = address(this).balance;
-
-        uint256 random = uint256(keccak256(abi.encodePacked(
-            block.timestamp,
-            block.coinbase,
-            block.difficulty,
-            blockhash_,
-            balance
-        ))) % max;
-
-        return random + 1;
+        emit OnDraw(msg.sender, random, getPlayerName(msg.sender), block.timestamp);
+        
+        return random;
     }
 }
