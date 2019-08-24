@@ -67,7 +67,7 @@ contract ProofOfSnek {
     {
         costToSetPlayerName = _costToSetPlayerName;
         jackpotActivationAmount = _jackpotActivationAmount;
-        hourglass = HourglassInterface(hourglassAddress);
+        hourglass = HourglassInterface(_hourglassAddress);
         minBet = _minBet;
         owner = msg.sender;
         ownershipCost = _ownershipCost;
