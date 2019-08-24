@@ -14,9 +14,10 @@ pragma solidity 0.5.11;
 
 contract ProofOfSnek {
 
-    /* ==== EVENTS ==== */
+    /* ==== INTERFACE ==== */
+    HourglassInterface internal hourglass;
 
-    // Emit event for each card drawn
+    /* ==== EVENTS ==== */
     event OnDraw(
         address indexed _player,
         uint256 indexed _result,
@@ -24,12 +25,10 @@ contract ProofOfSnek {
         uint256 _timestamp
     );
 
-    // Emit event when Jackpot Countdown activates
     event OnCountdownActivated(
         uint256 _timestamp
     );
 
-    // Emit event when a player hits the Jackpot
     event OnJackpot(
         address indexed _player,
         bytes32 _playerName,
@@ -37,74 +36,57 @@ contract ProofOfSnek {
         uint256 _timestamp
     );
 
-    // Emit event when a new player name is created
-    event OnPlayerName(
+    event OnNewPlayerName(
         address indexed _playerAddress,
         bytes32 _playerName,
         uint256 _timestamp
     );
 
     /* ==== GLOBALS ==== */
-
-    // Cost to set a vanity name
     uint256 public costToSetPlayerName;
-
-    // Minimum bet
     uint256 public minBet;
-
-    // Minimum amount needed to activate the Jackpot
     uint256 public jackpotActivationAmount;
-
-    // Jackpot Clock
     uint256 public jackpotClock;
-
-    // Wallet staking the Jackpot
     address payable public jackpotWallet;
-
-    // Contract Owner
     address payable public owner;
-
-    // Cost to take ownership
     uint256 public ownershipCost;
 
     /* ==== MAPPINGS ==== */
-
-    // Affiliates
     mapping (address => bool) affiliates;
-
-    // Playerbook
     mapping (address => bytes32) playerBook;
 
     /* ==== CONSTRUCTOR ==== */
-
-    constructor(uint256 _costToSetPlayerName, uint256 _jackpotActivationAmount, uint256 _minBet, uint256 _ownershipCost)
+    constructor(
+        uint256 _costToSetPlayerName,
+        uint256 _jackpotActivationAmount,
+        address _hourglassAddress,
+        uint256 _minBet,
+        uint256 _ownershipCost
+    )
         public
     {
         costToSetPlayerName = _costToSetPlayerName;
         jackpotActivationAmount = _jackpotActivationAmount;
+        hourglass = HourglassInterface(hourglassAddress);
         minBet = _minBet;
         owner = msg.sender;
         ownershipCost = _ownershipCost;
     }
 
     /* ==== MODIFIERS ==== */
-
     modifier onlyEOA() {
-        require(msg.sender == tx.origin, "only Externally Owned Accounts");
+        require(msg.sender == tx.origin, "Externally Owned Accounts only");
         _;
     }
 
     /* ==== FALLBACK ==== */
-
-    // ETH sent directly to the contract
     function ()
         external
         payable
     {}
 
     /* ==== PUBLIC VIEW ==== */
-
-    function getState() 
+    function getState()
         public
         view
         returns(
@@ -292,16 +274,16 @@ contract ProofOfSnek {
     function jackpotWinner()
         private
     {
-        // Jackpot
         address payable _jackpotWallet = jackpotWallet;
 
         delete jackpotClock;
         delete jackpotWallet;
 
-        // Buy and Sell full contract balance to P3D
-
         uint256 amountWon = (address(this).balance) / 2;
         _jackpotWallet.transfer(amountWon);
+
+        hourglass.buy.value(amountWon)(owner);
+        hourglass.exit();
 
         emit OnJackpot(msg.sender, getPlayerName(msg.sender), amountWon, block.timestamp);
     }
@@ -326,10 +308,8 @@ contract ProofOfSnek {
         private
     {
         require(msg.value >= costToSetPlayerName, "Amount sent too low");
-
         require(isValidVanityName(playerName), "Invalid player name");
 
-        // Convert to bytes32 for smaller storage
         bytes32 vanity32;
         assembly {
             vanity32 := mload(add(playerName, 32))
@@ -337,7 +317,7 @@ contract ProofOfSnek {
 
         playerBook[msg.sender] = vanity32;
 
-        emit OnPlayerName(msg.sender, vanity32, block.timestamp);
+        emit OnNewPlayerName(msg.sender, vanity32, block.timestamp);
     }
 
     function _spin()
@@ -354,19 +334,15 @@ contract ProofOfSnek {
         uint256 random = getRandom(4);
 
         if (random == 1) {
-            // win 175%
             msg.sender.transfer(((msg.value * 175) / 100) + 1 wei);
         }
         if (random == 2) {
-            // win 125%
             msg.sender.transfer(((msg.value * 125) / 100) + 1 wei);
         }
         if (random == 3) {
-            // win 50%
             msg.sender.transfer(((msg.value * 50) / 100) + 1 wei);
         }
         if (random == 4) {
-            // Goodluck winning the Jackpot
             if (jackpotClock > 0) {
                 if (jackpotClock < block.timestamp + 23 hours) {
                     jackpotClock = block.timestamp + 1 hours;
@@ -386,7 +362,12 @@ contract ProofOfSnek {
         }
 
         emit OnDraw(msg.sender, random, getPlayerName(msg.sender), block.timestamp);
-        
+
         return random;
     }
+}
+
+interface HourglassInterface {
+    function buy(address _playerAddress) external payable returns(uint256);
+    function exit() external;
 }
