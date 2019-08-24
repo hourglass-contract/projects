@@ -195,24 +195,24 @@ contract ProofOfSnek {
         payoutAffiliate(affiliateAddress);
     }
 
-    function spin()
+    function drawCard()
         public
         payable
         onlyEOA()
     {
-        uint256 random = _spin();
+        uint256 random = _drawCard();
 
         if (random != 4) {
             payoutOwner();
         }
     }
 
-    function spin(address payable affiliateAddress)
+    function drawCard(address payable affiliateAddress)
         public
         payable
         onlyEOA()
     {
-        uint256 random = _spin();
+        uint256 random = _drawCard();
 
         if (random != 4) {
             payoutAffiliate(affiliateAddress);
@@ -320,7 +320,7 @@ contract ProofOfSnek {
         emit OnNewPlayerName(msg.sender, vanity32, block.timestamp);
     }
 
-    function _spin()
+    function _drawCard()
         private
         returns (uint256)
     {
