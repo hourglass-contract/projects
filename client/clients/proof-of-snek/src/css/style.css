@@ -1,11 +1,17 @@
 body {
   background-color: #111;
   font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+b {
+  font-weight: 700;
 }
 
 button {
@@ -74,7 +80,6 @@ table tbody span {
 .box {
   background-color: #242736;
   border-radius: 8px;
-  color: #ccc;
   font-size: 18px;
   padding: 30px;
   line-height: 30px;

@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.container.cards .cards {
+.container.cards .box {
   margin-bottom: 30px;
 }
 
@@ -125,7 +125,8 @@
 
 .container.cards .place-bet button {
   background-color: #242736;
-  border: 1px solid #777;
+  border: none;
+  border-bottom: 2px solid #000;
   border-radius: 4px;
   color: #ccc;
   font-size: 14px;
@@ -143,18 +144,19 @@
 }
 
 @media only screen and (max-width: 800px) {
+  /* .container.cards .cards-wrapper {} */
   .container.cards .draw-card-wrapper .wrapper {
     display: inline-block;
     max-width: 400px;
     margin-bottom: 50px;
   }
-  .container.cards .cards .card {
+  .container.cards .card {
     margin-bottom: 50px;
   }
 }
 
 @media only screen and (max-width: 450px) {
-  .cards .card:last-of-type {
+  .container.cards .card:last-of-type {
     margin-bottom: 0;
   }
 }

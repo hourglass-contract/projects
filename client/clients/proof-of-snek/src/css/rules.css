@@ -1,10 +1,97 @@
-.rules h2 {
-  color: #fff;
-  font-size: 21px;
-  padding-bottom: 10px;
-  text-align: center;
+.container.rules {
+  color: #ccc;
+  font-weight: 100;
 }
 
-.rules .box>div {
-  margin-bottom: 20px;
+.container.rules h2 {
+  color: #fff;
+  font-size: 16px;
+  padding-bottom: 10px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.container.rules h4 {
+  font-size: 14px;
+}
+
+.container.rules .rule {
+  border-bottom: 1px dashed #555;
+  padding: 30px;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.container.rules .rule:last-of-type {
+  border-bottom: none;
+}
+
+.container.rules .rule .intro {
+  color: #c5d34a;
+}
+
+.container.rules .rule .card-type {
+  color: #777;
+}
+
+.container.rules .rule span {
+  color: #fff;
+  padding-left: 4px;
+}
+
+.container.rules .rule .card-type img {
+  padding-right: 10px;
+  vertical-align: -5px;
+  width: 24px;
+}
+
+.container.rules .cards-wrapper {
+  padding-top: 20px;
+}
+
+.container.rules .card {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 42px;
+  border: 1px solid #777;
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 56.25px;
+  margin: 2px;
+  position: relative;
+  width: 75px;
+}
+
+.container.rules .card.snek {
+  border: 1px solid #c5d34a;
+}
+
+.container.rules .card svg {
+  width: 200px;
+  height: 112.5px;
+}
+
+.container.rules .card.snek {
+  background-image: url('./images/tsnek.png');
+}
+
+.container.rules .card.whale {
+  background-image: url('./images/twhale.png');
+}
+
+.container.rules .card.bull {
+  background-image: url('./images/tbull.png');
+}
+
+.container.rules .card.bear {
+  background-image: url('./images/tbear.png');
+}
+
+/* @media only screen and (max-width: 800px) {} */
+
+@media only screen and (max-width: 450px) {
+  .container.rules .rule {
+    padding: 30px 0px;
+  }
 }
