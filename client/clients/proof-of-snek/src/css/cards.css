@@ -1,0 +1,160 @@
+.container.cards {
+  text-align: center;
+}
+
+.container.cards .cards {
+  margin-bottom: 30px;
+}
+
+/* 16:9 ASPECT RATIO */
+
+/* 16:9 = 16/9 = width / height = (9 * 200 / 16) = 112.5 */
+
+.container.cards .card {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100px;
+  border: 1px solid #777;
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 112.5px;
+  margin: 2px;
+  position: relative;
+  width: 150px;
+}
+
+.container.cards .card svg {
+  width: 200px;
+  height: 112.5px;
+}
+
+.container.cards .card .reward {
+  bottom: -25px;
+  color: #ccc;
+  position: absolute;
+  width: 150px;
+  height: 20px;
+  z-index: 99;
+  font-size: 18px;
+}
+
+.container.cards .card.snek {
+  background-image: url('./images/tsnek.png');
+}
+
+.container.cards .card.whale {
+  background-image: url('./images/twhale.png');
+}
+
+.container.cards .card.bull {
+  background-image: url('./images/tbull.png');
+}
+
+.container.cards .card.bear {
+  background-image: url('./images/tbear.png');
+}
+
+.container.cards .draw-card-wrapper {
+  box-sizing: border-box;
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+.container.cards .draw-card-wrapper button {
+  background-color: #c5d34a;
+  border: none;
+  border-radius: 6px;
+  color: #333;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px 50px;
+  letter-spacing: 1px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.container.cards .draw-card-wrapper .cost {
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 100;
+  padding-top: 10px;
+}
+
+.container.cards .draw-card-wrapper button>div {
+  color: #ccc;
+  font-size: 15px;
+  font-weight: 100;
+}
+
+.container.cards .place-bet {
+  border-top: 1px dashed #777;
+  display: inline-block;
+  margin: 0 auto;
+  max-width: 600px;
+  padding-top: 20px;
+  width: 100%;
+}
+
+.container.cards .place-bet .input-wrapper {
+  color: #ccc;
+  position: relative;
+}
+
+.container.cards .place-bet input {
+  background-color: #242736;
+  border: 1px solid #777;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #ccc;
+  font-size: 16px;
+  font-weight: 100;
+  margin-bottom: 10px;
+  padding: 12px;
+  text-align: center;
+  width: 100%;
+}
+
+.container.cards .place-bet svg {
+  height: 24px;
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+
+.container.cards .place-bet button {
+  background-color: #242736;
+  border: 1px solid #777;
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 100;
+  padding: 6px;
+  width: 49%;
+}
+
+.container.cards .place-bet button:first-of-type {
+  float: left;
+}
+
+.container.cards .place-bet button:last-of-type {
+  float: right;
+}
+
+@media only screen and (max-width: 800px) {
+  .container.cards .draw-card-wrapper .wrapper {
+    display: inline-block;
+    max-width: 400px;
+    margin-bottom: 50px;
+  }
+  .container.cards .cards .card {
+    margin-bottom: 50px;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .cards .card:last-of-type {
+    margin-bottom: 0;
+  }
+}

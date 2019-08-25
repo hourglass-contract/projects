@@ -9,6 +9,7 @@ a {
 }
 
 button {
+  cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -62,6 +63,7 @@ table tbody span {
   border: solid 1px #4e4f62;
   border-radius: 12px;
   box-sizing: border-box;
+  clear: both;
   margin: 0 auto;
   margin-bottom: 20px;
   max-width: 1000px;

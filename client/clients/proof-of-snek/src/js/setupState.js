@@ -1,11 +1,11 @@
-import slot3d from './contracts/slot3d.sol.js';
+import proofOfSnek from './contracts/proof-of-snek.sol.js';
 
 export default async function setupState() {
   window.dapp.contracts = {
-    slot3d: {
-      address: slot3d.address,
-      contract: new window.web3.eth.Contract(slot3d.abi, slot3d.address),
-      isConnected: await web3.eth.getCode(slot3d.address) !== '0x',
+    proofOfSnek: {
+      address: proofOfSnek.address,
+      contract: new window.web3.eth.Contract(proofOfSnek.abi, proofOfSnek.address),
+      isConnected: await web3.eth.getCode(proofOfSnek.address) !== '0x',
     }
   };
 }

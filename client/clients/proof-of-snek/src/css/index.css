@@ -1,8 +1,9 @@
 @import 'reset.css';
 @import 'style.css';
 @import 'header.css';
-@import 'jackpot.css';
-@import 'slots.css';
+@import 'title.css';
 @import 'countdown.css';
+@import 'cards.css';
+@import 'jackpot.css';
 @import 'rules.css';
 @import 'results.css';

@@ -11,7 +11,7 @@ export default function setupDOM() {
   displayContractStatus();
 
   // Contract not deployed
-  if (!window.dapp.contracts.slot3d.isConnected) {
+  if (!window.dapp.contracts.proofOfSnek.isConnected) {
     console.log('Contract not deployed');
     return;
   }
@@ -29,8 +29,8 @@ function addListeners() {
 
 async function spin() {
   const affiliate = '0x727C98364025d2EE552d4ec13e53c315dFEa57b8';
-  const data = window.dapp.contracts.slot3d.contract.methods.spin(affiliate).encodeABI();
-  const cost = await window.dapp.contracts.slot3d.contract.methods.costToPlay().call();
+  const data = window.dapp.contracts.proofOfSnek.contract.methods.spin(affiliate).encodeABI();
+  const cost = await window.dapp.contracts.proofOfSnek.contract.methods.costToPlay().call();
 
   sendTransaction({
     cost,
@@ -44,7 +44,7 @@ async function sendTransaction(payload) {
   const BN = window.web3.utils.BN;
 
   const from = await web3.eth.getCoinbase();
-  const to = window.dapp.contracts.slot3d.address;
+  const to = window.dapp.contracts.proofOfSnek.address;
   const value = new BN(cost);
 
   web3.eth.sendTransaction({
