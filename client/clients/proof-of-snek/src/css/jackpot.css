@@ -1,11 +1,17 @@
 .container.jackpot {
   color: #ccc;
-  font-size: 60px;
+  font-size: 30px;
+  font-weight: 700;
   text-align: center;
 }
 
 .container.jackpot svg {
-  height: 60px;
-  margin-left: 10px;
-  vertical-align: -10px;
+  height: 30px;
+  margin-left: 8px;
+  vertical-align: -4px;
+}
+
+.container.jackpot .countdown {
+  font-weight: 100;
+  padding-top: 20px;
 }

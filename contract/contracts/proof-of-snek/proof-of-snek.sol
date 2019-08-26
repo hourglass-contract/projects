@@ -18,10 +18,9 @@ contract ProofOfSnek {
     HourglassInterface internal hourglass;
 
     /* ==== EVENTS ==== */
-    event OnDraw(
-        address indexed _player,
-        uint256 indexed _result,
-        bytes32 _playerName,
+    event OnContribution(
+        uint256 _contributor,
+        uint256 _amount,
         uint256 _timestamp
     );
 
@@ -29,7 +28,14 @@ contract ProofOfSnek {
         uint256 _timestamp
     );
 
-    event OnJackpot(
+    event OnDraw(
+        address indexed _player,
+        uint256 indexed _result,
+        bytes32 _playerName,
+        uint256 _timestamp
+    );
+
+    event OnJackpotWon(
         address indexed _player,
         bytes32 _playerName,
         uint256 _amount,
@@ -41,6 +47,12 @@ contract ProofOfSnek {
         bytes32 _playerName,
         uint256 _timestamp
     );
+
+    event OnWithdrawContribution(
+        address indexed _contributorAddress,
+        uint256 _amountWithdrawn,
+        uint256 _timestamp
+    )
 
     /* ==== GLOBALS ==== */
     uint256 public costToSetPlayerName;
@@ -54,6 +66,7 @@ contract ProofOfSnek {
     /* ==== MAPPINGS ==== */
     mapping (address => bool) affiliates;
     mapping (address => bytes32) playerBook;
+    mapping (address => uint256) contributor;
 
     /* ==== CONSTRUCTOR ==== */
     constructor(
@@ -169,6 +182,15 @@ contract ProofOfSnek {
     }
 
     /* ==== PUBLIC WRITE ==== */
+    function contribute()
+        public
+        payable
+        onlyEOA()
+    {
+        contributor[msg.sender] = contributor[msg.sender] + msg.value;
+
+        emit OnContribution(msg.sender, msg.value, block.timestamp);
+    }
 
     function createAffiliate()
         public
@@ -217,6 +239,24 @@ contract ProofOfSnek {
         if (random != 4) {
             payoutAffiliate(affiliateAddress);
         }
+    }
+
+    function withdrawContribution(uint256 amountToWithdraw)
+        public
+        onlyEOA()
+    {
+        require(address(this).balance > jackpotActivationAmount, "Contract balance too low");
+        require((address(this).balance - jackpotActivationAmount) > amountToWithdraw, "Amount requested too high");
+        require(amountToWithdraw <= contributor[msg.sender], "Amount requested too high");
+
+        if (amountToWithdraw == contributor[msg.sender]) {
+            delete contributor[msg.sender];
+        } else {
+            contributor[msg.sender] = contributor[msg.sender] - amountToWithdraw;
+        }
+
+        msg.sender.transfer(amountToWithdraw);
+        emit OnWithdrawContribution(msg.sender, amountToWithdraw, block.timestamp);
     }
 
     /* ==== OWNER ==== */
@@ -285,7 +325,7 @@ contract ProofOfSnek {
         hourglass.buy.value(amountWon)(owner);
         hourglass.exit();
 
-        emit OnJackpot(msg.sender, getPlayerName(msg.sender), amountWon, block.timestamp);
+        emit OnJackpotWon(msg.sender, getPlayerName(msg.sender), amountWon, block.timestamp);
     }
 
     function payoutAffiliate(address payable affiliateAddress)

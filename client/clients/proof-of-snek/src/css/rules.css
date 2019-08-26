@@ -1,5 +1,6 @@
 .container.rules {
   color: #ccc;
+  font-size: 18px;
   font-weight: 100;
 }
 
@@ -28,10 +29,7 @@
 
 .container.rules .rule .intro {
   color: #c5d34a;
-}
-
-.container.rules .rule .card-type {
-  color: #777;
+  text-align: justify;
 }
 
 .container.rules .rule span {
@@ -39,14 +37,10 @@
   padding-left: 4px;
 }
 
-.container.rules .rule .card-type img {
+.container.rules .rule h4 img {
   padding-right: 10px;
   vertical-align: -5px;
   width: 24px;
-}
-
-.container.rules .cards-wrapper {
-  padding-top: 20px;
 }
 
 .container.rules .card {
