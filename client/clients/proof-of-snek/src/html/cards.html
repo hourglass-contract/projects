@@ -15,17 +15,17 @@
   </div>
 </div>
 <div class="draw-card-wrapper">
-  <button id="draw">DRAW CARD</button>
+  <button id="draw_card">DRAW CARD</button>
 </div>
 <div class="place-bet">
   <div class="input-wrapper">
-    <input type="text" placeholder="0.01" value="0.01">
+    <input id="bet" type="text" placeholder="0.01" value="0.01">
     <svg class="eth-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
       <path fill="currentColor" d="M311.9 260.8L160 353.6 8 260.8 160 0l151.9 260.8zM160 383.4L8 290.6 160 512l152-221.4-152 92.8z"></path>
     </svg>
   </div>
   <div>
-    <button class="min">MIN: 0.01</button>
-    <button class="max">MAX: 0.01</button>
+    <button id="set_min_bet" class="min">MIN: <span id="min_bet">0</span></button>
+    <button id="set_max_bet" class="max">MAX: <span id="max_bet">0</span></button>
   </div>
 </div>

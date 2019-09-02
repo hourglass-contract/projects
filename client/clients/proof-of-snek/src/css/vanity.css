@@ -1,0 +1,42 @@
+.container.vanity {
+  text-align: center;
+}
+
+.container.vanity .wrapper {
+  display: inline-block;
+  max-width: 600px;
+  width: 100%;
+}
+
+.container.vanity input {
+  background-color: #242736;
+  border: 1px solid #777;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #ccc;
+  font-size: 16px;
+  font-weight: 100;
+  margin-bottom: 10px;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.container.vanity button {
+  background-color: #242736;
+  border: none;
+  border-bottom: 2px solid #000;
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 100;
+  margin-bottom: 10px;
+  padding: 6px;
+  width: 100%;
+}
+
+.container.vanity .cost {
+  color: #ccc;
+  font-weight: 100;
+  font-size: 13px;
+}

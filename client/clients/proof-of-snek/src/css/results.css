@@ -1,3 +1,97 @@
-table .result {
+.container.results {
+  display: table;
+}
+
+.container.results tr:nth-child(even) {
+  background: #242736;
+}
+
+.container.results td {
+  height: 35px;
+  vertical-align: middle;
+}
+
+.container.results .index {
+  font-size: 12px;
   text-align: center;
+}
+
+.container.results .date {
+  font-weight: 400;
+}
+
+.container.results .address {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.container.results .player-name {
+  color: #e1e1e1;
+  font-size: 14px;
+  font-weight: 900;
+  padding-bottom: 6px;
+}
+
+.container.results .amount {
+  color: #fff;
+  font-weight: 400;
+  text-align: center;
+}
+
+.container.results .result {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px;
+  width: 28px;
+}
+
+.container.results .whale {
+  background-image: url('./images/twhale.png');
+}
+
+.container.results .bull {
+  background-image: url('./images/tbull.png');
+}
+
+.container.results .bear {
+  background-image: url('./images/tbear.png');
+}
+
+.container.results .snek {
+  background-image: url('./images/tsnek.png');
+}
+
+@media only screen and (max-width: 800px) {
+  .container.results .date {
+    display: none;
+  }
+  .container.results .address {
+    font-size: 12px;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .container.results {
+    padding: 8px;
+  }
+  .container.results td {
+    height: 24px;
+    padding: 2px 2px;
+  }
+  .container.results .index {
+    font-size: 10px;
+  }
+  .container.results .amount {
+    font-size: 11px;
+  }
+  .container.results .player-name {
+    font-size: 11px;
+    padding-bottom: 4px;
+  }
+  .container.results .address {
+    font-size: 10px;
+  }
+  .container.results .result {
+    background-size: 20px;
+  }
 }

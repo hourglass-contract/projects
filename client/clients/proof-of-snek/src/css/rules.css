@@ -88,4 +88,7 @@
   .container.rules .rule {
     padding: 30px 0px;
   }
+  .container.rules .rule .intro {
+    font-size: 16px;
+  }
 }

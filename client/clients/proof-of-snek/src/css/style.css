@@ -25,11 +25,12 @@ button {
 
 table {
   border-collapse: collapse;
+  table-layout: auto;
   width: 100%;
 }
 
 table, th, td {
-  border: 1px solid #ccc;
+  border: 1px solid #c5d34a;
 }
 
 table thead {
@@ -42,12 +43,13 @@ table thead td {
 }
 
 table tbody {
-  color: #fff;
+  color: #ccc;
   font-size: 13px;
   font-weight: 100;
 }
 
 table tbody td {
+  overflow: hidden;
   padding: 5px 10px;
 }
 
@@ -87,4 +89,14 @@ table tbody span {
 .section {
   background-color: #3f3f3f;
   position: relative;
+}
+
+@media only screen and (max-width: 450px) {
+  .container {
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .box {
+    padding: 10px;
+  }
 }

@@ -143,6 +143,10 @@
   float: right;
 }
 
+.container.cards .place-bet button span {
+  padding-left: 4px;
+}
+
 @media only screen and (max-width: 800px) {
   /* .container.cards .cards-wrapper {} */
   .container.cards .draw-card-wrapper .wrapper {
@@ -151,12 +155,18 @@
     margin-bottom: 50px;
   }
   .container.cards .card {
-    margin-bottom: 50px;
+    margin: 36px;
   }
 }
 
 @media only screen and (max-width: 450px) {
-  .container.cards .card:last-of-type {
-    margin-bottom: 0;
+  .container.cards .card {
+    background-size: contain;
+    height: 56.25px;
+    margin: 18px;
+    width: 75px;
+  }
+  .container.cards .card .reward {
+    width: 80px;
   }
 }

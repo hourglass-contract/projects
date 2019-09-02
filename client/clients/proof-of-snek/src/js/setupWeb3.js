@@ -1,11 +1,6 @@
 export default async function setupWeb3() {
   if (window.ethereum) {
     window.web3 = await new Web3(window.ethereum);
-    try {
-      await window.ethereum.enable();
-    } catch(error) {
-      console.error(error);
-    }
   } else if (window.web3) {
     window.web3 = await new Web3(Web3.givenProvider);
   } else {
