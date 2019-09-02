@@ -5,6 +5,10 @@
   width: 100%;
 }
 
+.header .error {
+  color: crimson;
+}
+
 .header .status {
   margin: 0 auto;
   padding: 10px;

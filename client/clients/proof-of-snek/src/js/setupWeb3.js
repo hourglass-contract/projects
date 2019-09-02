@@ -11,7 +11,8 @@ export default async function setupWeb3() {
 
   if(window.web3.currentProvider && window.web3.currentProvider.isConnected()) {
     window.dapp.connected = true;
-    console.log('successfully connected');
+    console.log('provider connected');
+    window.dapp.network = await window.web3.eth.net.getNetworkType();
   } else {
     console.log("provider not connected");
     window.dapp.connected = false;
