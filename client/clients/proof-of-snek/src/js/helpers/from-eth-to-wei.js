@@ -1,4 +1,5 @@
-export default function fromEthToWei(ether) {
+import { ethers } from 'ethers';
 
-  return window.web3.utils.toWei(ether.toString(), 'ether');
+export default function fromEthToWei(ether) {
+  return ethers.utils.parseEther(ether);
 }

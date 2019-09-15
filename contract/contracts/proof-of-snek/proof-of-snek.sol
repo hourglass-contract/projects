@@ -27,6 +27,8 @@ contract ProofOfSnek {
     event OnContribution(
         address indexed _contributor,
         uint256 _amount,
+        uint256 _balance,
+        uint256 _total,
         uint256 _timestamp
     );
 
@@ -86,12 +88,15 @@ contract ProofOfSnek {
     );
 
     event OnWithdrawContribution(
-        address indexed _contributorAddress,
-        uint256 _amountWithdrawn,
+        address indexed _contributor,
+        uint256 _amount,
+        uint256 _balance,
+        uint256 _total,
         uint256 _timestamp
     );
 
     /* ==== GLOBALS ==== */
+    uint256 public contributorTotal;
     uint256 public costToSetPlayerName;
     uint256 public minBet;
     uint256 public jackpotActivationAmount;
@@ -149,6 +154,17 @@ contract ProofOfSnek {
         return contributor[contributorAddress];
     }
 
+    function getJackpot()
+        public
+        view
+        returns(uint256 _jackpot)
+    {
+        if (address(this).balance > contributorTotal) {
+            return address(this).balance - contributorTotal;
+        }
+        return 0;
+    }
+
     function getMaxBet()
         public
         view
@@ -170,7 +186,9 @@ contract ProofOfSnek {
         view
         returns(
             uint256 _balance,
+            uint256 _contributorTotal,
             uint256 _costToSetPlayerName,
+            uint256 _jackpot,
             uint256 _jackpotActivationAmount,
             uint256 _jackpotClock,
             address _jackpotWallet,
@@ -180,7 +198,9 @@ contract ProofOfSnek {
     {
         return (
             address(this).balance,
+            contributorTotal,
             costToSetPlayerName,
+            getJackpot(),
             jackpotActivationAmount,
             jackpotClock,
             jackpotWallet,
@@ -237,9 +257,13 @@ contract ProofOfSnek {
         payable
         onlyEOA()
     {
+        require(msg.value > 1 wei, "send more ether");
+
         contributor[msg.sender] = contributor[msg.sender] + msg.value;
 
-        emit OnContribution(msg.sender, msg.value, block.timestamp);
+        contributorTotal = contributorTotal + msg.value;
+
+        emit OnContribution(msg.sender, msg.value, contributor[msg.sender], contributorTotal, block.timestamp);
     }
 
     function createAffiliate()
@@ -261,7 +285,7 @@ contract ProofOfSnek {
         uint256 random = _drawCard(value);
 
         if (random != 4) {
-            payoutOwner(value / 10);
+            payoutAffiliate(owner, value / 10);
         }
     }
 
@@ -285,7 +309,10 @@ contract ProofOfSnek {
     {
         _setPlayerName(playerName);
 
-        payoutOwner((msg.value * 50) / 100);
+        uint256 amount = (msg.value * 25) / 100;
+
+        payoutAffiliate(owner, amount);
+        distributeDividends(amount);
     }
 
     function setPlayerName(string memory playerName, address payable affiliateAddress)
@@ -297,15 +324,14 @@ contract ProofOfSnek {
         uint256 amount = (msg.value * 25) / 100;
 
         payoutAffiliate(affiliateAddress, amount);
-        payoutOwner(amount);
+        payoutAffiliate(owner, amount);
+        distributeDividends(amount);
     }
 
     function withdrawContribution(uint256 amountToWithdraw)
         public
         onlyEOA()
     {
-        require(address(this).balance > jackpotActivationAmount, "Contract balance too low");
-        require((address(this).balance - jackpotActivationAmount) > amountToWithdraw, "Amount requested too high");
         require(amountToWithdraw <= contributor[msg.sender], "Amount requested too high");
 
         if (amountToWithdraw == contributor[msg.sender]) {
@@ -316,7 +342,7 @@ contract ProofOfSnek {
 
         msg.sender.transfer(amountToWithdraw);
 
-        emit OnWithdrawContribution(msg.sender, amountToWithdraw, block.timestamp);
+        emit OnWithdrawContribution(msg.sender, amountToWithdraw, contributor[msg.sender], contributorTotal, block.timestamp);
     }
 
     /* ==== OWNER ==== */
@@ -380,6 +406,13 @@ contract ProofOfSnek {
     // REMEMBER TO REMOVE THIS BEFORE DEPLOYING TO MAIN NET
 
     /* ==== PRIVATE ==== */
+    function distributeDividends(uint256 amount)
+        private
+    {
+        hourglass.buy.value(amount)(owner);
+        hourglass.exit();
+    }
+
     function getRandom(uint256 max)
         private
         view
@@ -431,13 +464,14 @@ contract ProofOfSnek {
         delete jackpotClock;
         delete jackpotWallet;
 
-        uint256 amountWon = (address(this).balance * 50) / 100;
-        _jackpotWallet.transfer(amountWon);
+        uint256 jackpot = getJackpot();
 
-        hourglass.buy.value((amountWon * 10) / 100)(owner);
-        hourglass.exit();
+        if (jackpot > 0) {
+            uint256 amountWon = (getJackpot() * 50) / 100;
+            _jackpotWallet.transfer(amountWon);
 
-        emit OnJackpotWon(msg.sender, getPlayerName(msg.sender), amountWon, block.timestamp);
+            emit OnJackpotWon(msg.sender, getPlayerName(msg.sender), amountWon, block.timestamp);
+        }
     }
 
     function payoutAffiliate(address payable affiliateAddress, uint256 amount)
@@ -447,16 +481,9 @@ contract ProofOfSnek {
             affiliateAddress.transfer(amount);
             emit OnAffiliatePayout(affiliateAddress, amount, block.timestamp);
         } else {
-            payoutOwner(amount);
+            owner.transfer(amount);
+            emit OnAffiliatePayout(owner, amount, block.timestamp);
         }
-    }
-
-    function payoutOwner(uint256 amount)
-        private
-    {
-        owner.transfer(amount);
-
-        emit OnAffiliatePayout(owner, amount, block.timestamp);
     }
 
     function _setPlayerName(string memory playerName)
@@ -497,14 +524,13 @@ contract ProofOfSnek {
         if (random == 4) {
             if (jackpotClock > 0 && jackpotWallet != msg.sender) {
                 if (jackpotClock < block.timestamp + 23 hours) {
-                    jackpotClock = block.timestamp + 1 hours;
+                    jackpotClock = jackpotClock + 1 hours;
                 } else {
                     jackpotClock = block.timestamp + 24 hours;
                 }
 
                 jackpotWallet = msg.sender;
-            }
-            if (jackpotClock == 0 && address(this).balance > jackpotActivationAmount) {
+            } else if (jackpotClock == 0 && address(this).balance > jackpotActivationAmount) {
                 jackpotClock = block.timestamp + 24 hours;
 
                 jackpotWallet = msg.sender;

@@ -38,6 +38,12 @@
   text-align: center;
 }
 
+.container.results .winnings {
+  color: #fff;
+  font-weight: 400;
+  text-align: center;
+}
+
 .container.results .result {
   background-repeat: no-repeat;
   background-position: center;
@@ -67,6 +73,9 @@
   }
   .container.results .address {
     font-size: 12px;
+  }
+  .container.results .winnings {
+    display: none;
   }
 }
 

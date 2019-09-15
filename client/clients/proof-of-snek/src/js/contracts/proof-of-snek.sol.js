@@ -5,6 +5,57 @@ export default {
 	abi: [
 		{
 			"constant": false,
+			"inputs": [],
+			"name": "contribute",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "createAffiliate",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "drawCard",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"internalType": "address payable",
+					"name": "affiliateAddress",
+					"type": "address"
+				}
+			],
+			"name": "drawCard",
+			"outputs": [],
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [],
+			"name": "kill",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": false,
 			"inputs": [
 				{
 					"internalType": "uint256",
@@ -19,87 +70,18 @@ export default {
 			"type": "function"
 		},
 		{
-			"constant": true,
-			"inputs": [],
-			"name": "getState",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "_balance",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_costToSetPlayerName",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_jackpotActivationAmount",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_jackpotClock",
-					"type": "uint256"
-				},
-				{
-					"internalType": "address",
-					"name": "_jackpotWallet",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_maxBet",
-					"type": "uint256"
-				},
+			"constant": false,
+			"inputs": [
 				{
 					"internalType": "uint256",
 					"name": "_minBet",
 					"type": "uint256"
 				}
 			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "jackpotWallet",
-			"outputs": [
-				{
-					"internalType": "address payable",
-					"name": "",
-					"type": "address"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "drawCard",
+			"name": "setMinBet",
 			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "ownershipCost",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
 			"payable": false,
-			"stateMutability": "view",
+			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
@@ -119,15 +101,6 @@ export default {
 		},
 		{
 			"constant": false,
-			"inputs": [],
-			"name": "kill",
-			"outputs": [],
-			"payable": false,
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"constant": false,
 			"inputs": [
 				{
 					"internalType": "string",
@@ -148,137 +121,26 @@ export default {
 		},
 		{
 			"constant": false,
-			"inputs": [],
-			"name": "takeOwnership",
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "playerName",
+					"type": "string"
+				}
+			],
+			"name": "setPlayerName",
 			"outputs": [],
 			"payable": true,
 			"stateMutability": "payable",
 			"type": "function"
 		},
 		{
-			"constant": true,
-			"inputs": [],
-			"name": "getMaxBet",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "_maxBet",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
 			"constant": false,
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_minBet",
-					"type": "uint256"
-				}
-			],
-			"name": "setMinBet",
+			"inputs": [],
+			"name": "takeOwnership",
 			"outputs": [],
-			"payable": false,
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "owner",
-			"outputs": [
-				{
-					"internalType": "address payable",
-					"name": "",
-					"type": "address"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "minBet",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [
-				{
-					"internalType": "string",
-					"name": "vanityString",
-					"type": "string"
-				}
-			],
-			"name": "isValidVanityName",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"payable": false,
-			"stateMutability": "pure",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "jackpotActivationAmount",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "jackpotClock",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [],
-			"name": "costToSetPlayerName",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
+			"payable": true,
+			"stateMutability": "payable",
 			"type": "function"
 		},
 		{
@@ -294,75 +156,6 @@ export default {
 			"outputs": [],
 			"payable": false,
 			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "contribute",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [
-				{
-					"internalType": "string",
-					"name": "playerName",
-					"type": "string"
-				}
-			],
-			"name": "setPlayerName",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
-			"type": "function"
-		},
-		{
-			"constant": true,
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "playerAddress",
-					"type": "address"
-				}
-			],
-			"name": "getPlayerName",
-			"outputs": [
-				{
-					"internalType": "bytes32",
-					"name": "playerName",
-					"type": "bytes32"
-				}
-			],
-			"payable": false,
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [],
-			"name": "createAffiliate",
-			"outputs": [],
-			"payable": false,
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"constant": false,
-			"inputs": [
-				{
-					"internalType": "address payable",
-					"name": "affiliateAddress",
-					"type": "address"
-				}
-			],
-			"name": "drawCard",
-			"outputs": [],
-			"payable": true,
-			"stateMutability": "payable",
 			"type": "function"
 		},
 		{
@@ -488,6 +281,12 @@ export default {
 				},
 				{
 					"indexed": false,
+					"internalType": "uint256",
+					"name": "_value",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
 					"internalType": "bytes32",
 					"name": "_playerName",
 					"type": "bytes32"
@@ -499,7 +298,7 @@ export default {
 					"type": "uint256"
 				}
 			],
-			"name": "OnDraw",
+			"name": "OnDrawCard",
 			"type": "event"
 		},
 		{
@@ -550,6 +349,81 @@ export default {
 				}
 			],
 			"name": "OnNewAffiliate",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_owner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_jackpotActivationAmount",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_timestamp",
+					"type": "uint256"
+				}
+			],
+			"name": "OnNewJackpotActivationAmount",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_owner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_minBet",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_timestamp",
+					"type": "uint256"
+				}
+			],
+			"name": "OnNewMinBet",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_owner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_ownershipCost",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_timestamp",
+					"type": "uint256"
+				}
+			],
+			"name": "OnNewOwnershipCost",
 			"type": "event"
 		},
 		{
@@ -626,6 +500,234 @@ export default {
 			],
 			"name": "OnWithdrawContribution",
 			"type": "event"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "costToSetPlayerName",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "contributorAddress",
+					"type": "address"
+				}
+			],
+			"name": "getContributorBalance",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "_balance",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getMaxBet",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "_maxBet",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "playerAddress",
+					"type": "address"
+				}
+			],
+			"name": "getPlayerName",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "playerName",
+					"type": "bytes32"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getState",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "_balance",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_costToSetPlayerName",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_jackpotActivationAmount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_jackpotClock",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_jackpotWallet",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_maxBet",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_minBet",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "vanityString",
+					"type": "string"
+				}
+			],
+			"name": "isValidVanityName",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "jackpotActivationAmount",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "jackpotClock",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "jackpotWallet",
+			"outputs": [
+				{
+					"internalType": "address payable",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "minBet",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "owner",
+			"outputs": [
+				{
+					"internalType": "address payable",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "ownershipCost",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
 		}
 	]
 }

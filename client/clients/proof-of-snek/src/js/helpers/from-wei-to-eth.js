@@ -1,4 +1,8 @@
-export default function fromWeiToEth(wei, decimalPlaces) {
+import { ethers } from 'ethers';
+import toTrunc from './to-trunc.js';
 
-  return parseFloat(window.web3.utils.fromWei(wei.toString(), 'ether')).toFixed(decimalPlaces);
+export default function fromWeiToEth(wei, decimalPlaces) {
+  const eth = parseFloat(ethers.utils.formatEther(wei.toString()));
+  
+  return toTrunc(eth, decimalPlaces).toFixed(decimalPlaces);
 }
